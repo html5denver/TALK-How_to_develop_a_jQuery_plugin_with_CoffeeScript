@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<title>How to develop a jQuery plugin with CoffeeScript</title>
+	
+	<meta name="description" content="How to develop a jQuery plugin with CoffeeScript">
+	<meta name="author" content="Wil Moore III">
+	<meta name="viewport" content="width=1024, user-scalable=no">
+	
+	<!-- Core and extension CSS files -->
+	<link rel="stylesheet" href="framework/core/deck.core.css">
+	<link rel="stylesheet" href="framework/extensions/goto/deck.goto.css">
+	<link rel="stylesheet" href="framework/extensions/menu/deck.menu.css">
+	<link rel="stylesheet" href="framework/extensions/navigation/deck.navigation.css">
+	<link rel="stylesheet" href="framework/extensions/status/deck.status.css">
+	<link rel="stylesheet" href="framework/extensions/hash/deck.hash.css">
+	
+	<!-- Theme CSS files (menu swaps these out) -->
+	<link rel="stylesheet" id="style-theme-link" href="framework/themes/style/web-2.0.css">
+	<link rel="stylesheet" id="transition-theme-link" href="framework/themes/transition/fade.css">
+	
+	<!-- Custom CSS just for this page -->
+	<link rel="stylesheet" href="main.css">
+	
+	<script src="framework/modernizr.custom.js"></script>
+</head>
+
+<body class="deck-container">
+
+<section class="slide" id="title-slide">
+  <h2>How to develop a jQuery plugin with CoffeeScript</h2>
+  <h1>Wil Moore III @wilmoore <a href="http://github.com/wilmoore">github.com/wilmoore</a></h1>
+</section>
+
+<section class="slide" id="screenshots">
+	<h2>Super simple test-case?</h2>
+	<p>Confirm that you'd like to be taken to an off-site URL after clicking a link/button.</p>
+  <img src="images/index.png" />
+  <img src="images/dialog.png" />
+</section>
+
+<section class="slide" id="markup-boilerplate">
+	<h2>Markup (boilerplate)</h2>
+	<p>HTML5 is simple; it works right now...let's use it:</p>
+	<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot;&gt;
+    &lt;title&gt;How to develop a jQuery plugin with CoffeeScript&lt;/title&gt;
+    &lt;body&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <p>full file @ <a href="https://gist.github.com/1308594#file_index.html">https://gist.github.com/1308594#file_index.html</a></p>
+</section>
+
+<section class="slide" id="markup-css">
+	<h2>Markup (yeah!!! css on top)</h2>
+	<p>Github button styles and our custom look & feel.</p>
+	<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot;&gt;
+    &lt;title&gt;How to develop a jQuery plugin with CoffeeScript&lt;/title&gt;
+<strong>
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;gh-buttons.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;main.css&quot;&gt;
+</strong>
+    &lt;body&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <p>Github Button CSS @ <a href="https://gist.github.com/1308594#file_gh_buttons.css">https://gist.github.com/1308594#file_gh_buttons.css</a></p> 
+    <p>or</p>
+    <p>Github Button CSS @ <a href="https://github.com/necolas/css3-github-buttons">https://github.com/necolas/css3-github-buttons</a></p>
+</section>
+
+<section class="slide" id="markup-main-css">
+	<h2>main.css</h2>
+	<p>Make our buttons line up correctly:</p>
+	<pre><code>body {
+     margin: 250px 0px;
+    padding: 0px; text-align:center; }
+
+.button {
+     margin: 15px 0; }
+</code></pre>
+    <p>full file @ <a href="https://gist.github.com/1308594#file_main.css">https://gist.github.com/1308594#file_main.css</a></p>
+</section>
+
+<section class="slide" id="markup-buttons">
+	<h2>Buttons w/ HTML5 <strike>attittudes</strike> attributes</h2>
+	<p>Buttons to event on:</p>
+	<pre><code>
+...
+    &lt;body&gt;
+<strong>
+    &lt;a href=&quot;http://example.com&quot;
+       class=&quot;button huge danger&quot;
+       data-external=&quot;true&quot;
+       data-confirm=&quot;Are you sure you want to leave us?&quot;&gt;
+    Explicit Confirm
+    &lt;/a&gt;
+
+    &lt;!-- two more buttons like this below, slight variations  --&gt;
+    &lt;!-- full file @: https://gist.github.com/1308594#file_index.html --&gt;
+</strong>
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <p>full file @ <a href="https://gist.github.com/1308594#file_index.html">https://gist.github.com/1308594#file_index.html</a></p>
+</section>
+
+<section class="slide" id="markup-js">
+	<h2>JavaScript (at the bottom)</h2>
+	<p>jQuery + our simple plugin (jquery.externalurl):</p>
+	<pre><code>
+    &lt;body&gt;
+...
+<strong>
+    &lt;script src=&quot;http://code.jquery.com/jquery-1.6.4.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;jquery.externalurl.js&quot;&gt;&lt;/script&gt;
+
+    &lt;script&gt;
+        $(document).ready(function() {
+            // create new instance of plugin
+            var plugin = new $.externalurl();
+        });
+    &lt;/script&gt;
+</strong>
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <p>full file @ <a href="https://gist.github.com/1308594#file_index.html">https://gist.github.com/1308594#file_index.html</a></p>
+</section>
+
+<section class="slide" id="markup-button-breakdown">
+	<h2>HTML5 attributes</h2>
+  <p>Our plugin is driven by HTML5 "data-" (data-dash) attributes similar to: <a href="https://github.com/rails/jquery-ujs/wiki/Unobtrusive-scripting-support-for-jQuery">Rails3 UJS support</a></p>
+	<pre><code>&lt;a href=&quot;http://example.com&quot; class=&quot;button huge danger&quot; data-external=&quot;true&quot; data-confirm=&quot;Are you sure you want to leave us?&quot; rel=&quot;nofollow&quot;&gt;Explicit Confirm&lt;/a&gt;</code></pre>
+  <p>Uses "data-external" to invoke functionality and "data-confirm" to (optionally) customize the confirmation message text</p>
+
+	<h2>Obtrusive code is so 1998</h2>
+  <p>Instead of this:</p>
+	<pre><code>onClick="var ask = confirm('...'); return false;</code></pre>
+  <p>This is nicer:</p>
+	<pre><code>$('[data-external]').data('confirm'); // try me in the script console :)</code></pre>
+</section>
+
+<section class="slide" id="scaffold-cs">
+	<h2>Walkthrough (CoffeeScript Scaffolding)</h2>
+	<pre><code>(($) ->
+  $.externalurl = (el, options) ->
+    defaults =
+      messageStay:    "Thanks for sticking with us!"
+      messageConfirm: "Are you sure you want to leave us?"
+
+    externalurl          = @
+    externalurl.settings = {}
+
+    init = ->
+
+    init()
+) jQuery
+</code></pre>
+<p>Continuously compile with <code>$ coffee -wc jquery.externalurl.coffee</code></p>
+</section>
+
+<section class="slide" id="scaffold-js">
+	<h2>Walkthrough (Resulting JavaScript)</h2>
+	<pre><code>(function($) {
+  return $.externalurl = function(el, options) {
+    var defaults, externalurl, init;
+    defaults = {
+      messageStay: "Thanks for sticking with us!",
+      messageConfirm: "Are you sure you want to leave us?"
+    };
+    externalurl = this;
+    externalurl.settings = {};
+    init = function() {};
+    return init();
+  };
+})(jQuery);
+</code></pre>
+</section>
+
+<section class="slide" id="init-method-cs">
+	<h2>Walkthrough ("init" method w/ CoffeeScript)</h2>
+	<pre><code>init = ->
+  externalurl.settings = $.extend({}, defaults, options)
+  externalurl.el       = el
+  externalurl.selector = "[data-external]"
+
+  $(this).delegate externalurl.selector, "click", (e) ->
+    e.preventDefault()
+
+    url = $(this).data("url") or @href
+    ask = $(this).data("confirm") or externalurl.settings.messageConfirm
+
+    return false unless url
+
+    if confirm(ask)
+      window.location.href = url
+    else
+      alert externalurl.settings.messageStay
+</code></pre>
+</section>
+
+<section class="slide" id="init-method-js">
+	<h2>Walkthrough (Resulting JavaScript)</h2>
+	<pre><code>init = function() {
+    externalurl.settings = $.extend({}, defaults, options);
+    externalurl.el       = el;
+    externalurl.selector = "[data-external]";
+
+    return $(this).delegate(externalurl.selector, "click", function(e) {
+      var ask, url;
+      e.preventDefault();
+      url = $(this).data("url")     || this.href;
+      ask = $(this).data("confirm") || externalurl.settings.messageConfirm;
+
+      if (!url) { return false; }
+      if (confirm(ask)) {
+        return window.location.href = url;
+      } else {
+        return alert(externalurl.settings.messageStay);
+      }
+    });
+  };
+</code></pre>
+</section>
+
+<section class="slide" id="review">
+	<h2>Review, quick live coding...</h2>
+	
+	<ol>
+		<li class="slide" id="review-html5-boilerplate">
+			<strong><a href="https://gist.github.com/1308594#file_index.html">index.html</a></strong> 
+		</li>
+		
+		<li class="slide" id="build-coffee-plugin">
+			<strong><a href="https://gist.github.com/1308594#file_jquery.externalurl.coffee">jquery.externalurl.coffee</a></strong> 
+		</li>
+
+		<li class="slide" id="browser-f5">
+			<strong>Press F5 in your browser...</strong>: that's it!
+		</li>
+	</ol>
+	
+  <p></h3>
+	<p class="slide" id="get-slides">Slides and code @ Github: <a href="https://github.com/wilmoore/presentation-html5denver-jqueryplugindev-coffeescript">https://github.com/wilmoore/presentation-html5denver-jqueryplugindev-coffeescript</a>.</p>
+	<p class="slide" id="extension-folders">Code only via Github gist @ <a href="https://gist.github.com/1308594">https://gist.github.com/1308594</a>.</p>
+</section>
+
+<a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+<a href="#" class="deck-next-link" title="Next">&#8594;</a>
+
+<p class="deck-status">
+	<span class="deck-status-current"></span>
+	/
+	<span class="deck-status-total"></span>
+</p>
+
+<form action="." method="get" class="goto-form">
+	<label for="goto-slide">Go to slide:</label>
+	<input type="number" name="slidenum" id="goto-slide">
+	<input type="submit" value="Go">
+</form>
+
+<a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="framework/jquery-1.6.4.min.js"><\/script>')</script>
+
+<!-- Deck Core and extensions -->
+<script src="framework/core/deck.core.js"></script>
+<script src="framework/extensions/menu/deck.menu.js"></script>
+<script src="framework/extensions/goto/deck.goto.js"></script>
+<script src="framework/extensions/status/deck.status.js"></script>
+<script src="framework/extensions/navigation/deck.navigation.js"></script>
+<script src="framework/extensions/hash/deck.hash.js"></script>
+
+<!-- Specific to this page -->
+<script src="main.js"></script>
+
+</body>
+</html>
