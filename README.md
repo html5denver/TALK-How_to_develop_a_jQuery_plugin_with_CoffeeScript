@@ -1,1 +1,0 @@
-open slides/index.html
